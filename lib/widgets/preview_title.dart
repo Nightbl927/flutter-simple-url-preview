@@ -14,12 +14,15 @@ class PreviewTitle extends StatelessWidget {
       return SizedBox();
     }
 
-    return Text(
-      _title!,
-      textAlign: TextAlign.left,
-      overflow: TextOverflow.ellipsis,
-      maxLines: _titleLines,
-      style: _titleStyle,
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        _title!,
+        textAlign: TextAlign.left,
+        overflow: TextOverflow.ellipsis,
+        maxLines: _titleLines,
+        style: _titleStyle,
+      ),
     );
   }
 }
