@@ -151,6 +151,53 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
 
   void _extractOGData(Document document, Map data, String parameter) {
     var titleMetaTag = document
+      .getElementsByTagName("meta")
+      .firstWhereOrNull((meta) => meta.attributes['property'] == parameter);
+    if (titleMetaTag != null) {
+      data[parameter] = titleMetaTag.attributes['content'];
+    }
+    else {
+      if(parameter == 'og:title') {
+        if(document.getElementsByTagName("title") != null) {
+          data[parameter] = document.getElementsByTagName("title")[0].text;
+        }
+      }
+      else if(parameter == 'og:image') {
+        var titleMetaTag = document
+          .getElementsByTagName("meta")
+          .firstWhereOrNull((meta) => meta.attributes['itemprop'] == 'image');
+        if (titleMetaTag != null) {
+          String _imagePart = "";
+
+          if(titleMetaTag.attributes['content'] != null) {
+            _imagePart = titleMetaTag.attributes['content']!;
+          }
+
+          data[parameter] = widget.url + "/" + _imagePart;
+        }
+        else {
+          var titleMetaTag = document
+            .getElementsByTagName("meta")
+            .firstWhereOrNull((meta) => meta.attributes['name'] == 'image');
+
+          if (titleMetaTag != null) {
+            data[parameter] = titleMetaTag.attributes['content'];
+          }
+        }
+      }
+      else if(parameter == 'og:description') {
+        var titleMetaTag = document
+            .getElementsByTagName("meta")
+            .firstWhereOrNull((meta) => meta.attributes['name'] == 'description');
+        if (titleMetaTag != null) {
+          data[parameter] = titleMetaTag.attributes['content'];
+        }
+      }
+    }
+  }
+
+  void _extractStandardData(Document document, Map data, String parameter) {
+    var titleMetaTag = document
         .getElementsByTagName("meta")
         .firstWhereOrNull((meta) => meta.attributes['property'] == parameter);
     if (titleMetaTag != null) {
@@ -178,17 +225,21 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
       return SizedBox();
     }
 
-    return Container(
-      padding: _previewContainerPadding,
-      height: _previewHeight,
-      child: Stack(
-        children: [
-          GestureDetector(
-            onTap: _onTap,
-            child: _buildPreviewCard(context),
-          ),
-          _buildClosablePreview(),
-        ],
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: _previewHeight!,
+      ),
+      child: Container(
+        padding: _previewContainerPadding,
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: _onTap,
+              child: _buildPreviewCard(context),
+            ),
+            _buildClosablePreview(),
+          ],
+        ),
       ),
     );
   }
@@ -213,56 +264,51 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
 
   Card _buildPreviewCard(BuildContext context) {
     return Card(
-      elevation: 5,
+      margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+      elevation: 0,
       color: _bgColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+        side: BorderSide(color: Theme.of(context).indicatorColor, width: 0.5)
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            width: (MediaQuery.of(context).size.width -
-                    MediaQuery.of(context).padding.left -
-                    MediaQuery.of(context).padding.right) *
-                0.25,
-            child: PreviewImage(
-              _urlPreviewData!['og:image'],
-              _imageLoaderColor,
-            ),
+          PreviewImage(
+            _urlPreviewData!['og:image'],
+            _imageLoaderColor,
           ),
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(16.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   PreviewTitle(
-                      _urlPreviewData!['og:title'],
-                      _titleStyle == null
-                          ? TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Theme.of(context).accentColor,
-                            )
-                          : _titleStyle,
-                      _titleLines),
+                    _urlPreviewData!['og:title'],
+                    _titleStyle == null ? TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).indicatorColor,
+                    ) : _titleStyle,
+                    _titleLines
+                  ),
                   PreviewDescription(
                     _urlPreviewData!['og:description'],
-                    _descriptionStyle == null
-                        ? TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).accentColor,
-                          )
-                        : _descriptionStyle,
+                    _descriptionStyle == null ? TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).accentColor,
+                    ) : _descriptionStyle,
                     _descriptionLines,
                   ),
                   PreviewSiteName(
-                    _urlPreviewData!['og:site_name'],
-                    _siteNameStyle == null
-                        ? TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).accentColor,
-                          )
-                        : _siteNameStyle,
+                    widget.url,
+                    _siteNameStyle == null ? TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).accentColor,
+                    ) : _siteNameStyle,
                   ),
                 ],
               ),
