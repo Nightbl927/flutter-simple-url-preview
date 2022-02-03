@@ -15,16 +15,14 @@ class PreviewDescription extends StatelessWidget {
       return SizedBox();
     }
 
-    return Flexible(
-      child: Container(
-        child: Text(
-          _description!,
-          overflow: TextOverflow.clip,
-          textAlign: TextAlign.left,
-          maxLines: _descriptionLines,
-          softWrap: true,
-          style: _textStyle,
-        ),
+    return Container(
+      child: Text(
+        _description!,
+        overflow: TextOverflow.clip,
+        textAlign: TextAlign.left,
+        maxLines: _descriptionLines,
+        softWrap: true,
+        style: _textStyle,
       ),
     );
   }
