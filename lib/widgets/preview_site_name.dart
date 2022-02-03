@@ -13,10 +13,13 @@ class PreviewSiteName extends StatelessWidget {
       return SizedBox();
     }
 
-    return Text(
-      _siteName!,
-      textAlign: TextAlign.left,
-      style: _textStyle,
+    return Container(
+        margin: EdgeInsets.only(top: 8.0),
+        child: Text(
+        _siteName!,
+        textAlign: TextAlign.left,
+        style: _textStyle,
+      ),
     );
   }
 }
