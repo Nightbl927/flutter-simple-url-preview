@@ -11,16 +11,18 @@ class PreviewImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (_image != null) {
-      return Container(
-          width: (MediaQuery.of(context).size.width -
-              MediaQuery.of(context).padding.left -
-              MediaQuery.of(context).padding.right) *
-              0.25,
-        child: Padding(
-          padding: EdgeInsets.all(10),
+      return ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+        ),
+        child: Container(
           child: CachedNetworkImage(
             imageUrl: _image!,
             fit: BoxFit.cover,
+            width: (MediaQuery.of(context).size.width -
+                MediaQuery.of(context).padding.top -
+                MediaQuery.of(context).padding.bottom) *
+                0.25,
             height: (MediaQuery.of(context).size.width -
                 MediaQuery.of(context).padding.top -
                 MediaQuery.of(context).padding.bottom) *
@@ -34,10 +36,10 @@ class PreviewImage extends StatelessWidget {
               color: _imageLoaderColor,
             ),
           ),
-        )
+        ),
       );
     } else {
-      return SizedBox.shrink();
+      return SizedBox();
     }
   }
 }
