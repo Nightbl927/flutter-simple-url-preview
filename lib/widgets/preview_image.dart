@@ -16,17 +16,24 @@ class PreviewImage extends StatelessWidget {
           topLeft: Radius.circular(15),
         ),
         child: Container(
+          constraints: BoxConstraints(
+            maxHeight: 200,
+            maxWidth: 300,
+          ),
           child: CachedNetworkImage(
             imageUrl: _image!,
             fit: BoxFit.cover,
             width: (MediaQuery.of(context).size.width -
-                MediaQuery.of(context).padding.top -
-                MediaQuery.of(context).padding.bottom) *
-                0.25,
+              MediaQuery.of(context).padding.top -
+              MediaQuery.of(context).padding.bottom) *
+              0.25,
             height: (MediaQuery.of(context).size.width -
                 MediaQuery.of(context).padding.top -
                 MediaQuery.of(context).padding.bottom) *
-                0.25,
+                0.25 < 201 ? (MediaQuery.of(context).size.width -
+              MediaQuery.of(context).padding.top -
+              MediaQuery.of(context).padding.bottom) *
+              0.25 : 200,
             errorWidget: (context, url, error) => Icon(
               Icons.error,
               color: _imageLoaderColor,
