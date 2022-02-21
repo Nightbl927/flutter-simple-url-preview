@@ -163,7 +163,7 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
     }
     else {
       if(parameter == 'og:title') {
-        if(document.getElementsByTagName("title") != null) {
+        if(document.getElementsByTagName("title").isNotEmpty) {
           data[parameter] = document.getElementsByTagName("title")[0].text;
         }
       }
