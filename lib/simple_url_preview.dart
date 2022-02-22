@@ -242,7 +242,7 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
         ),
         child: Center(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
             child: SpinKitThreeBounce(
               color: Theme.of(context).indicatorColor,
               size: 50.0,
@@ -287,7 +287,7 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+              padding: _urlPreviewData!['og:image'] != null ? EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0) : EdgeInsets.zero,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
