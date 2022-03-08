@@ -121,30 +121,37 @@ class _SimpleUrlPreviewState extends State<SimpleUrlPreview> {
       return;
     }
 
-    var response = await get(Uri.parse(widget.url));
-    if (response.statusCode != 200) {
+    try {
+      var response = await get(Uri.parse(widget.url));
+      if (response.statusCode != 200) {
+        if (!this.mounted) {
+          return;
+        }
+        setState(() {
+          _urlPreviewData = null;
+        });
+      }
+
+      var document = parse(response.body);
+      Map data = {};
+      _extractOGData(document, data, 'og:title');
+      _extractOGData(document, data, 'og:description');
+      _extractOGData(document, data, 'og:site_name');
+      _extractOGData(document, data, 'og:image');
+
       if (!this.mounted) {
         return;
       }
+
+      if (data.isNotEmpty) {
+        setState(() {
+          _urlPreviewData = data;
+          _isVisible = true;
+        });
+      }
+    } on Exception catch (_) {
       setState(() {
-        _urlPreviewData = null;
-      });
-    }
-
-    var document = parse(response.body);
-    Map data = {};
-    _extractOGData(document, data, 'og:title');
-    _extractOGData(document, data, 'og:description');
-    _extractOGData(document, data, 'og:site_name');
-    _extractOGData(document, data, 'og:image');
-
-    if (!this.mounted) {
-      return;
-    }
-
-    if (data.isNotEmpty) {
-      setState(() {
-        _urlPreviewData = data;
+        _urlPreviewData = {};
         _isVisible = true;
       });
     }
